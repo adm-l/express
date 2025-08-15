@@ -1,28 +1,40 @@
 pipeline {
     agent any
     environment {
-        IMAGE_NAME = "localhost:5000/cicd-demo:${BUILD_NUMBER}"
+        IMAGE_NAME = "expressapp"
+        IMAGE_TAG = "latest"
     }
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                sh 'npm ci || npm install'
+                git branch: 'master', url: 'https://github.com/adm-l/express.git'
+            }
+        }
+        stage('Install & Lint') {
+            steps {
+                sh 'npm ci'
+                sh 'npm run lint'
             }
         }
         stage('Test') {
             steps {
-                sh 'node test.js'
+                sh 'npm test'
             }
         }
-        stage('Docker Build & Push') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
-                sh 'docker push $IMAGE_NAME'
+                sh "docker build -t $IMAGE_NAME:$IMAGE_TAG ."
             }
         }
-        stage('Deploy to Minikube') {
+        stage('Security Scan') {
             steps {
-                sh 'kubectl set image deployment/cicd-demo cicd-demo=$IMAGE_NAME --record || kubectl apply -f deployment.yaml'
+                sh "trivy image $IMAGE_NAME:$IMAGE_TAG"
+            }
+        }
+        stage('Deploy Locally') {
+            steps {
+                sh 'docker compose down || true'
+                sh 'docker compose up -d'
             }
         }
     }

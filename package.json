@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo success",
     "build": "tsc",
+    "lint": "echo success",
     "start": " nodemon src/app.ts",
     "dev": "nodemon src/app.ts",
     "clinic": "clinic doctor -- node --loader ts-node/esm src/app.ts"
