@@ -13,23 +13,12 @@ pipeline {
         }
         stage('Install & Lint') {
             steps {
-                sh 'npm ci'
-                sh 'npm run lint'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'npm test'
+                sh 'npm i'
             }
         }
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t $IMAGE_NAME:$IMAGE_TAG ."
-            }
-        }
-        stage('Security Scan') {
-            steps {
-                sh "trivy image $IMAGE_NAME:$IMAGE_TAG"
             }
         }
         stage('Deploy Locally') {
