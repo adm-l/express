@@ -1,5 +1,6 @@
 pipeline {
     agent any
+    tools { nodejs 'node-22' }
     environment {
         IMAGE_NAME = "expressapp"
         IMAGE_TAG = "latest"
